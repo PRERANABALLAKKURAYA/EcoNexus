@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--panel:#0e1b19;--panel2:#122622;--line:#1d3733;--brass:#c08552;--text:#e8e4dc;--dim:#8ba39c;--faint:#5a706a;--ok:#4fa88c;--warm:#e0a63e;--hot:#d6472b}
+*{box-sizing:border-box}html,body{margin:0;background:transparent;color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif}
+.app{height:__H__px;display:flex;flex-direction:column;gap:12px}
+.head{display:flex;align-items:center;gap:14px;padding:10px 16px;border-radius:8px;border:1px solid var(--line);background:var(--panel);transition:background .4s,border-color .4s}
+.head .live{font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:var(--hot);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.head .live i{width:8px;height:8px;border-radius:50%;background:var(--hot);animation:blink 1.2s infinite}
+.paused .live i{animation:none;background:var(--faint)}.paused .live{color:var(--faint)}
+@keyframes blink{50%{opacity:.25}}
+.head .msg{flex:1;font-size:14px;font-weight:500}.head .clock{font:600 18px 'Big Shoulders Display',sans-serif;letter-spacing:.04em;white-space:nowrap}
+.head.l1{background:#2a2410;border-color:#6b5517}.head.l2{background:#2e1410;border-color:#7a2a1c}
+.main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 350px;gap:12px}
+@media(max-width:1000px){.main{grid-template-columns:1fr}}
+.col{display:flex;flex-direction:column;gap:12px;min-height:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;min-height:0}
+.ph{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line)}
+.ph h2{font:700 15px 'Big Shoulders Display',sans-serif;letter-spacing:.06em;text-transform:uppercase;margin:0}
+.tag{font:400 10.5px 'IBM Plex Mono',monospace;color:var(--faint)}
+.floor{flex:1;min-height:0;padding:2px 6px}svg#floor{width:100%;height:100%;display:block}
+.legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:7px 14px;border-top:1px solid var(--line);font-size:11px;color:var(--dim)}
+.grad{width:110px;height:7px;border-radius:4px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.rack{cursor:pointer}.rack .body{stroke:#000;stroke-width:1.2}.rack:hover .body{stroke:var(--text);stroke-width:2}.rack.sel .body{stroke:var(--brass);stroke-width:3.5}
+.pulse{fill:none;stroke:var(--hot);stroke-width:2.2;animation:pl 1.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pl{0%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(1.1)}}
+.flow{stroke-dasharray:6 7;animation:fl 1.2s linear infinite}@keyframes fl{to{stroke-dashoffset:-26}}
+.fan{transform-box:fill-box;transform-origin:center;animation:sp 5s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.wbar{transition:width .5s}
+.ctrl{display:flex;align-items:center;gap:8px;padding:9px 14px;border-top:1px solid var(--line);flex-wrap:wrap}
+button{font:500 11.5px 'IBM Plex Mono',monospace;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:5px;padding:7px 11px;cursor:pointer}
+button:hover{border-color:var(--brass);color:var(--brass)}button.pri{background:#8a6440;border-color:var(--brass);color:#fff;min-width:92px}
+button.on{background:var(--brass);color:#111;border-color:var(--brass)}
+#scrub{flex:1;min-width:140px;accent-color:#c08552}
+.tl{padding:8px 14px 10px;border-top:1px solid var(--line)}.tl svg{width:100%;height:62px;display:block;cursor:pointer}
+.tlab{display:flex;justify-content:space-between;font:400 10px 'IBM Plex Mono',monospace;color:var(--faint);margin-top:2px}
+.side{overflow:auto;flex:1}.sb{padding:13px 15px}
+.rt{font:500 11px 'IBM Plex Mono',monospace;color:var(--faint)}
+.temp{font:800 46px/1 'Big Shoulders Display',sans-serif}.temp small{font-size:18px;color:var(--dim);font-weight:600}
+.badge{display:inline-block;font:600 10px 'IBM Plex Mono',monospace;padding:3px 8px;border-radius:3px;letter-spacing:.06em}
+.sub{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.5}.sub b{color:var(--text)}
+.sec{font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin:15px 0 6px}
+.g{display:grid;grid-template-columns:104px 1fr 44px;gap:8px;align-items:center;font-size:11.5px;color:var(--dim);margin:5px 0}
+.bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;border-radius:3px;transition:width .5s}
+.why{font-size:12.5px;line-height:1.55}
+.rs{padding:6px 0;border-bottom:1px solid var(--line);font-size:11.5px}.rs b{color:var(--brass);font-family:'IBM Plex Mono',monospace;margin-right:6px}
+.rs div{color:var(--faint);font:400 10.5px 'IBM Plex Mono',monospace;margin-top:2px}
+.rec{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:9px 11px;margin-bottom:8px;cursor:pointer}.rec:hover{border-color:var(--brass)}
+.rec .t{font-size:12.5px;font-weight:600}.rec .j{font-size:11px;color:var(--dim);margin-top:3px}
+.chip{display:inline-block;font:500 10px 'IBM Plex Mono',monospace;padding:2px 6px;border-radius:3px;margin:6px 5px 0 0;background:#0b2a22;color:#7fe0c4;border:1px solid #1d4a3f}.chip.w{background:#2b1d10;color:var(--warm);border-color:#5a3f17}
+table.cmp{width:100%;border-collapse:collapse;margin-top:8px;font:400 10.5px 'IBM Plex Mono',monospace}
+table.cmp td,table.cmp th{padding:3px 4px;text-align:right;border-bottom:1px solid var(--line)}table.cmp th{color:var(--faint);font-weight:500}table.cmp td:first-child,table.cmp th:first-child{text-align:left}
+.note{font-size:10.5px;color:var(--faint);margin-top:12px;line-height:1.5}
+.log{height:178px}.logb{overflow:auto;flex:1;padding:4px 12px}
+.ev{display:flex;gap:9px;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--line);font-size:11.5px;cursor:pointer}.ev:hover{color:var(--brass)}
+.ev time{font:500 10.5px 'IBM Plex Mono',monospace;color:var(--faint);min-width:86px}.empty{color:var(--faint);font-size:12px;padding:12px 2px}
+</style></head><body>
+<div class="app" id="app">
+ <div class="head" id="head"><div class="live"><i></i><span id="livetxt">LIVE SIMULATION</span></div><div class="msg" id="msg"></div><div class="clock" id="clock"></div></div>
+ <div class="main">
+  <div class="col"><div class="panel" style="flex:1">
+   <div class="ph"><h2>Digital twin &middot; Server hall</h2><span class="tag" id="ftag"></span></div>
+   <div class="floor"><svg id="floor" viewBox="0 0 900 540" preserveAspectRatio="xMidYMid meet"></svg></div>
+   <div class="legend"><span>Rack temperature:</span><span>cool</span><div class="grad" id="grad"></div><span>hot</span>
+    <span><i class="dot" style="background:#4fa88c"></i>Normal</span><span><i class="dot" style="background:#e0a63e"></i>Rising risk = at/above <b id="lw"></b>&deg;C or heating fast</span><span><i class="dot" style="background:#d6472b"></i>Hotspot = predicted to reach <b id="lc"></b>&deg;C</span></div>
+   <div class="tl"><svg id="tl" viewBox="0 0 600 62" preserveAspectRatio="none"></svg><div class="tlab"><span id="t0"></span><span>Hottest rack over time (red = hotspot, amber = rising risk) &middot; click to jump</span><span id="t1"></span></div></div>
+   <div class="ctrl"><button class="pri" id="bPlay">&#9208; Pause</button><button id="bRe">&#8634; Restart</button><button id="bNext">&#9197; Next alert</button>
+    <span class="tag" style="margin-left:8px">Speed</span><button data-sp="1" class="on">1&times;</button><button data-sp="2">2&times;</button><button data-sp="4">4&times;</button>
+    <input type="range" id="scrub" min="0" value="0"></div>
+  </div></div>
+  <div class="col">
+   <div class="panel" style="flex:1"><div class="ph"><h2>Rack inspector</h2><span class="tag" id="itag">click a rack</span></div><div class="side" id="ins"></div></div>
+   <div class="panel log"><div class="ph"><h2>Event log</h2><span class="tag">click an event to jump</span></div><div class="logb" id="log"></div></div>
+  </div>
+ </div>
+</div>
+<script>
+(function(){
+const D=__DATA__,NS='http://www.w3.org/2000/svg',F=D.frames,N=F.length,R=D.racks,NR=R.length,svg=document.getElementById('floor');
+const W=D.thr.warn,C=D.thr.crit,BIG="'Big Shoulders Display','Arial Narrow',Impact,sans-serif",MONO="'IBM Plex Mono',monospace";
+const LC=['#4fa88c','#e0a63e','#d6472b'],LI=['\u2714','\u25B2','\u25CF'],LT=['NORMAL','RISING RISK','HOTSPOT'];
+const $=id=>document.getElementById(id);
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const T=(x,y,s,a,p)=>{const t=el('text',Object.assign({x,y},a),p||svg);t.textContent=s;return t};
+const WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmt(s,short){const d=new Date(s.slice(0,10)+'T00:00:00Z'),tm=s.slice(11);return short?tm:WD[d.getUTCDay()]+' '+d.getUTCDate()+' '+MO[d.getUTCMonth()]+' \u00B7 '+tm}
+$('lw').textContent=W;$('lc').textContent=C;
+const stops=[[W-28,'#3b82c4'],[W-14,'#4fa88c'],[W-3,'#e0a63e'],[C-4,'#d97a3d'],[C+4,'#d6472b']];
+const h2r=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+function col(t){if(t<=stops[0][0])return stops[0][1];if(t>=stops[4][0])return stops[4][1];
+ for(let i=0;i<4;i++){const[a,ca]=stops[i],[b,cb]=stops[i+1];if(t>=a&&t<=b){const f=(t-a)/(b-a),x=h2r(ca),y=h2r(cb);
+ return'#'+[0,1,2].map(k=>Math.round(x[k]+(y[k]-x[k])*f).toString(16).padStart(2,'0')).join('')}}}
+$('grad').style.background='linear-gradient(90deg,'+stops.map(s=>s[1]).join(',')+')';
+$('ftag').textContent=NR+' racks \u00B7 '+D.units.length+' cooling units \u00B7 simulated data';
+$('t0').textContent=fmt(F[0].t,1);$('t1').textContent=fmt(F[N-1].t,1);
+
+// ---------- geometry ----------
+const cols=Math.max(...R.map(r=>r.pos[0]))+1,rows=Math.max(...R.map(r=>r.pos[1]))+1;
+const RW=172,RH=190,GX=36,GY=54,CW=76,CH=104,gw=cols*RW+(cols-1)*GX,gh=rows*RH+(rows-1)*GY,X0=(900-gw)/2,Y0=46,VH=Y0+gh+34;
+svg.setAttribute('viewBox','0 0 900 '+VH);
+const rx=r=>X0+r.pos[0]*(RW+GX),ry=r=>Y0+r.pos[1]*(RH+GY),rc=r=>[rx(r)+RW/2,ry(r)+RH/2],byId={};R.forEach(r=>byId[r.id]=r);
+const defs=el('defs',{},svg);const pat=el('pattern',{id:'dots',width:24,height:24,patternUnits:'userSpaceOnUse'},defs);el('circle',{cx:1.5,cy:1.5,r:1,fill:'#1d3733'},pat);
+const bl=el('filter',{id:'blur',x:'-40%',y:'-40%',width:'180%',height:'180%'},defs);el('feGaussianBlur',{stdDeviation:14},bl);
+el('rect',{x:6,y:6,width:888,height:VH-12,rx:10,fill:'url(#dots)',stroke:'#1d3733'},svg);
+// zone bands
+const zones=[...new Set(R.map(r=>r.zone))];
+zones.forEach(z=>{const rs=R.filter(r=>r.zone===z),x1=Math.min(...rs.map(rx))-12,x2=Math.max(...rs.map(r=>rx(r)+RW))+12,y1=Math.min(...rs.map(ry))-14,y2=Math.max(...rs.map(r=>ry(r)+RH))+12;
+ el('rect',{x:x1,y:y1,width:x2-x1,height:y2-y1,rx:10,fill:'rgba(255,255,255,.015)',stroke:'#2a4a44','stroke-dasharray':'4 4'},svg);
+ const u=D.units.filter(u=>u.zone===z).map(u=>u.id).join(', ');
+ T(x1+10,y1-4,'ZONE '+z+(u?'  \u00B7  main cooling: unit '+u:''),{fill:'#6f8a83','font-family':MONO,'font-size':10,'letter-spacing':'.08em'})});
+const U=D.units.map((u,i)=>{const rs=R.filter(r=>r.zone===u.zone),cy=rs.reduce((s,r)=>s+rc(r)[1],0)/rs.length,left=i%2===0;
+ return Object.assign({},u,{x:left?X0-CW-30:X0+gw+30,y:cy-CH/2,cx:left?X0-30:X0+gw+30,cy})});
+const eL=el('g',{},svg);
+D.links.forEach(([a,b,w])=>{const A=rc(byId[a]),B=rc(byId[b]);el('line',{x1:A[0],y1:A[1],x2:B[0],y2:B[1],stroke:'#3a5c56','stroke-opacity':.6,'stroke-width':1+w*5},eL)});
+const flows=[];
+U.forEach((u,ui)=>Object.keys(u.serves).forEach(id=>{const w=u.serves[id],B=rc(byId[id]);
+ const ln=el('line',{x1:u.cx,y1:u.cy,x2:B[0],y2:B[1],class:'flow','stroke-width':1+w*1.8},eL);flows.push({ln,ui,w});
+ if(w<1){const m=[(u.cx+B[0])/2,(u.cy+B[1])/2];T(m[0],m[1]-3,Math.round(w*100)+'% of airflow',{fill:'#5a706a','font-family':MONO,'font-size':8.5,'text-anchor':'middle'},eL)}}));
+// racks
+const gR=el('g',{},svg),RK=R.map((r,i)=>{const g=el('g',{class:'rack',transform:'translate('+rx(r)+','+ry(r)+')'},gR);
+ const glow=el('rect',{x:-8,y:-8,width:RW+16,height:RH+16,rx:14,filter:'url(#blur)',opacity:0},g);
+ const pulse=el('rect',{class:'pulse',x:-4,y:-4,width:RW+8,height:RH+8,rx:9,display:'none'},g);
+ const body=el('rect',{class:'body',width:RW,height:RH,rx:7,'fill-opacity':.92},g);
+ el('rect',{width:RW,height:28,rx:7,fill:'rgba(0,0,0,.38)'},g);
+ T(10,19,r.id,{fill:'#fff','font-family':MONO,'font-size':13,'font-weight':600},g);
+ const cl=T(RW-10,19,'',{'font-family':MONO,'font-size':10.5,'font-weight':600,'text-anchor':'end'},g);
+ const leds=[],bars=[];
+ for(let s=0;s<8;s++){el('rect',{x:10,y:36+s*11.5,width:RW-20,height:8.5,rx:1.5,fill:'rgba(0,0,0,.30)'},g);
+  bars.push(el('rect',{class:'wbar',x:13,y:38+s*11.5,width:0,height:4.5,rx:1,fill:'rgba(255,255,255,.3)'},g));
+  leds.push(el('rect',{x:RW-24,y:38.5+s*11.5,width:7,height:3.5,fill:'#7fe0c4'},g))}
+ el('rect',{x:8,y:RH-68,width:RW-16,height:60,rx:5,fill:'rgba(5,8,7,.68)'},g);
+ const tt=T(16,RH-34,'0.0',{fill:'#fff','font-family':BIG,'font-size':30,'font-weight':800},g);const tu=el('tspan',{'font-size':14,fill:'#cfd8d4','font-weight':600,dx:2},tt);tu.textContent='\u00B0C';
+ const st=T(16,RH-14,'',{'font-family':MONO,'font-size':10.5,'font-weight':600},g);
+ T(RW-16,RH-44,'IN NEXT '+D.horizon_min+' MIN',{fill:'#8ba39c','font-family':MONO,'font-size':8,'text-anchor':'end'},g);
+ const pk=T(RW-16,RH-22,'',{'font-family':BIG,'font-size':19,'font-weight':700,'text-anchor':'end'},g);
+ g.addEventListener('click',()=>{sel=i;draw(true)});return{g,glow,pulse,body,leds,bars,tt,st,pk,cl}});
+// cooling units
+const UK=U.map((u,i)=>{const g=el('g',{},svg),halo=el('circle',{cx:u.x+CW/2,cy:u.y+CH/2,r:54,opacity:.1},g),box=el('rect',{x:u.x,y:u.y,width:CW,height:CH,rx:8,fill:'#122622','stroke-width':1.7},g);
+ const fan=T(u.x+CW/2,u.y+34,'\u2744',{class:'fan','font-size':24,'text-anchor':'middle'},g);
+ T(u.x+CW/2,u.y+54,'COOLING '+u.id,{fill:'#c08552','font-family':MONO,'font-size':10,'font-weight':600,'text-anchor':'middle'},g);
+ const out=T(u.x+CW/2,u.y+70,'',{'font-family':MONO,'font-size':10,'text-anchor':'middle'},g);
+ const stt=T(u.x+CW/2,u.y+88,'',{'font-family':MONO,'font-size':8.5,'font-weight':600,'text-anchor':'middle'},g);return{halo,box,fan,out,stt}});
+
+// ---------- timeline + events ----------
+const mx=F.map(f=>Math.max(...f.r.map(r=>r.T))),ml=F.map(f=>Math.max(...f.r.map(r=>r.L)));
+const tl=$('tl'),tlo=Math.min(...mx,W-8),thi=Math.max(...mx,C+2),tx=i=>i/(N-1)*600,ty=v=>56-(v-tlo)/(thi-tlo)*50;
+for(let i=0;i<N;){let j=i;while(j+1<N&&ml[j+1]===ml[i])j++;if(ml[i])el('rect',{x:tx(i),y:0,width:Math.max(tx(j+1<N?j+1:j)-tx(i),2),height:62,fill:ml[i]===2?'#d6472b':'#e0a63e',opacity:.24},tl);i=j+1}
+[[W,'#e0a63e'],[C,'#d6472b']].forEach(([v,c])=>el('line',{x1:0,x2:600,y1:ty(v),y2:ty(v),stroke:c,'stroke-dasharray':'3 3',opacity:.7,'vector-effect':'non-scaling-stroke'},tl));
+el('polyline',{points:mx.map((v,i)=>tx(i)+','+ty(v)).join(' '),fill:'none',stroke:'#6fb1e6','stroke-width':1.6,'vector-effect':'non-scaling-stroke'},tl);
+const head=el('line',{y1:0,y2:62,stroke:'#fff','stroke-width':1.6,'vector-effect':'non-scaling-stroke'},tl);
+tl.addEventListener('click',e=>{const b=tl.getBoundingClientRect();go(Math.round((e.clientX-b.left)/b.width*(N-1)),true)});
+const EV=[];
+F.forEach((f,i)=>{f.r.forEach((r,j)=>{const pl=i?F[i-1].r[j].L:0;if(r.L!==pl)EV.push({i,k:'lv',j,from:pl,to:r.L})});
+ f.k.forEach((k,u)=>{const pk=i?F[i-1].k[u]:1;if(Math.abs(k-pk)>.01)EV.push({i,k:'cool',u,from:pk,to:k})})});
+function evText(e){if(e.k==='lv')return e.to>e.from?'<b style="color:'+LC[e.to]+'">'+R[e.j].id+'</b> \u2192 '+LT[e.to]:'<b style="color:'+LC[e.to]+'">'+R[e.j].id+'</b> back to '+LT[e.to];
+ return 'Cooling unit <b>'+D.units[e.u].id+'</b> '+(e.to<e.from?'<span style="color:#e0a63e">output dropped to '+Math.round(e.to*100)+'%</span>':'<span style="color:#7fe0c4">restored to '+Math.round(e.to*100)+'%</span>')}
+const isBad=e=>(e.k==='lv'&&e.to>e.from)||(e.k==='cool'&&e.to<e.from);
+
+// ---------- state / drawing ----------
+let idx=0,playing=true,speed=1,sel=null,timer=null,open=null;const disp=new Array(NR).fill(null),tgt=new Array(NR).fill(0);
+const fm=v=>(v>0?'+':'')+v.toFixed(1),bar=(l,v,c,t)=>'<div class="g"><span>'+l+'</span><div class="bar"><i style="width:'+Math.round(Math.max(0,Math.min(1,v))*100)+'%;background:'+c+'"></i></div><span style="font-family:'+MONO+'">'+t+'</span></div>';
+function spark(j){const w=318,h=96,p=8,hist=D.hist0[R[j].id].concat(F.slice(0,idx+1).map(f=>f.r[j].T)).slice(-36),fc=F[idx].r[j].F,v=hist.concat(fc),n=v.length;
+ const lo=Math.min(...v,W-6),hi=Math.max(...v,C+3),x=i=>p+i*(w-2*p)/(n-1),y=t=>h-p-(t-lo)/(hi-lo)*(h-2*p),H=hist.length;
+ const hp=hist.map((t,i)=>x(i)+','+y(t)).join(' '),fp=[hist[H-1]].concat(fc).map((t,i)=>x(H-1+i)+','+y(t)).join(' ');
+ return '<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;display:block"><line x1="0" x2="'+w+'" y1="'+y(W)+'" y2="'+y(W)+'" stroke="#e0a63e" stroke-dasharray="3 3" opacity=".6"/><text x="3" y="'+(y(W)-3)+'" fill="#e0a63e" font-size="8" font-family="IBM Plex Mono" stroke="#0e1b19" stroke-width="3" paint-order="stroke">warning '+W+'\u00B0</text>'+
+ '<line x1="0" x2="'+w+'" y1="'+y(C)+'" y2="'+y(C)+'" stroke="#d6472b" stroke-dasharray="3 3" opacity=".7"/><text x="3" y="'+(y(C)-3)+'" fill="#d6472b" font-size="8" font-family="IBM Plex Mono" stroke="#0e1b19" stroke-width="3" paint-order="stroke">critical '+C+'\u00B0</text>'+
+ '<polyline points="'+hp+'" fill="none" stroke="#6fb1e6" stroke-width="2"/><polyline points="'+fp+'" fill="none" stroke="#ff6a4d" stroke-width="2.5" stroke-dasharray="4 3"/><circle cx="'+x(H-1)+'" cy="'+y(hist[H-1])+'" r="3.5" fill="#fff"/><circle cx="'+x(n-1)+'" cy="'+y(fc[fc.length-1])+'" r="3.5" fill="#ff6a4d"/></svg>'}
+function inspector(){const j=sel,r=F[idx].r[j],id=R[j].id,c=LC[r.L];
+ let h='<div class="sb"><div class="rt">'+id+' &middot; ZONE '+R[j].zone+'</div><div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:4px"><div class="temp">'+r.T.toFixed(1)+'<small> \u00B0C</small></div>'+
+ '<span class="badge" style="background:'+c+'22;color:'+c+';border:1px solid '+c+'66">'+LI[r.L]+' '+LT[r.L]+'</span></div>'+
+ '<div class="sub">Expected to peak at <b>'+r.P.toFixed(1)+'\u00B0C</b> within the next '+D.horizon_min+' min \u00B7 '+(r.SL>0.15?'heating up':(r.SL<-0.15?'cooling down':'steady'))+' ('+fm(r.SL)+' \u00B0C per 5 min)</div>'+
+ '<div class="sec">Temperature: past and forecast</div>'+spark(j)+'<div class="sub" style="display:flex;gap:14px;margin-top:2px"><span><i class="dot" style="background:#6fb1e6"></i>measured</span><span><i class="dot" style="background:#ff6a4d"></i>model forecast</span></div>'+
+ '<div class="sec">What is driving it</div>'+bar('Workload',r.UR,'#6fb1e6',Math.round(r.UR*100)+'%')+bar('Cooling it gets',r.C,r.C<0.8?'#e0a63e':'#4fa88c',Math.round(r.C*100)+'%')+
+ bar('Heat from neighbours',(r.N-18)/(C-18),'#c08552',r.N.toFixed(0)+'\u00B0')+bar('Overall risk',r.S,r.S>.6?'#d6472b':(r.S>.35?'#e0a63e':'#4fa88c'),Math.round(r.S*100)+'%')+
+ '<div class="sec">Why</div><div class="why">'+r.W+'</div>'+r.RS.map(x=>'<div class="rs"><b>'+x[0]+'</b>'+x[1]+'<div>'+x[2]+'</div></div>').join('')+
+ '<div class="sec">What to do</div>';
+ if(r.L===0)h+='<div class="why" style="color:var(--dim)">Nothing to do. This rack is within normal limits.</div>';
+ else h+=r.RC.map((x,i)=>{const key=id+x[0],o=open===key;let tb='';
+  if(o){tb='<table class="cmp"><tr><th>Rack</th><th>Peak now</th><th>If done</th></tr>'+R.map((q,k)=>{const b=F[idx].r[k].BP,a=x[7][k],d=a-b;return '<tr><td>'+q.id+'</td><td>'+b.toFixed(1)+'\u00B0</td><td style="color:'+(d<-.05?'#7fe0c4':(d>.05?'#e0a63e':'#8ba39c'))+'">'+a.toFixed(1)+'\u00B0 ('+fm(d)+')</td></tr>'}).join('')+'</table>'}
+  return '<div class="rec" data-k="'+key.replace(/"/g,'')+'"><div class="t">'+(i+1)+'. '+x[0]+'</div><div class="j">'+x[2]+'</div>'+(x[6]!=='monitor'?'<span class="chip">peak '+fm(x[3])+'\u00B0C</span><span class="chip">in '+D.horizon_min+' min '+fm(x[4])+'\u00B0C</span>':'')+(x[5].length?'<span class="chip w">\u26A0 '+x[5].join(', ')+' riskier</span>':'')+(x[6]!=='monitor'?'<div class="tag" style="margin-top:6px">'+(o?'\u25B4 hide':'\u25BE show effect on every rack')+'</div>':'')+tb+'</div>'}).join('');
+ h+='<div class="note">To test, accept or reject an action, open the <b>What-if lab</b> tab. EcoNexus only advises; it never controls equipment.</div></div>';
+ const box=$('ins'),st=box.scrollTop;box.innerHTML=h;box.scrollTop=st;
+ box.querySelectorAll('.rec').forEach((e,i)=>e.addEventListener('click',()=>{const x=r.RC[i];if(x[6]==='monitor')return;const key=id+x[0];open=open===key?null:key;inspector()}));
+ $('itag').textContent=id+' \u00B7 zone '+R[j].zone}
+function draw(snap){const f=F[idx];
+ f.r.forEach((r,i)=>{const k=RK[i];tgt[i]=r.T;if(disp[i]===null||snap)disp[i]=r.T;
+  k.g.classList.toggle('sel',i===sel);k.pulse.setAttribute('display',r.L===2?'block':'none');
+  const lc=r.L===0?'#7fe0c4':(r.L===1?'#ffd36b':'#ff6a4d');k.leds.forEach((l,s)=>l.setAttribute('fill',(s%3===0&&r.L===2)?'#fff':lc));
+  const on=Math.round(r.U*8);k.bars.forEach((b,s)=>b.setAttribute('width',s<on?RW-52:0));
+  k.st.textContent=LI[r.L]+' '+LT[r.L];k.st.setAttribute('fill',r.L===0?'#7fe0c4':LC[r.L]);
+  k.pk.textContent=r.P.toFixed(1)+'\u00B0';k.pk.setAttribute('fill',r.P>=W?'#ffb09f':'#e8e4dc');
+  k.cl.textContent='\u2744 cooling '+Math.round(r.C*100)+'%';k.cl.setAttribute('fill',r.C<.8?'#ffe08a':'rgba(255,255,255,.75)')});
+ f.k.forEach((kv,u)=>{const q=UK[u],deg=kv<.99,c=deg?'#e0a63e':'#8a6440';q.box.setAttribute('stroke',c);q.halo.setAttribute('fill',deg?'#e0a63e':'#3b82c4');
+  q.fan.setAttribute('fill',deg?'#e0a63e':'#7cc0ff');q.fan.style.animationDuration=(5/Math.max(kv,.2))+'s';
+  q.out.textContent='output '+Math.round(kv*100)+'%';q.out.setAttribute('fill',deg?'#ffd36b':'#8ba39c');
+  q.stt.textContent=deg?'\u25B2 DEGRADED':'\u2714 HEALTHY';q.stt.setAttribute('fill',deg?'#e0a63e':'#4fa88c')});
+ flows.forEach(o=>{const kv=f.k[o.ui],deg=kv<.99;o.ln.setAttribute('stroke',deg?'#e0a63e':'#3b82c4');o.ln.setAttribute('stroke-opacity',(.14+.3*o.w)*(deg?1.3:1));o.ln.style.animationDuration=(1.2/Math.max(kv,.25))+'s'});
+ const hs=f.r.map((r,i)=>r.L===2?R[i].id:null).filter(Boolean),rr=f.r.map((r,i)=>r.L===1?R[i].id:null).filter(Boolean),deg=D.units.map((u,i)=>f.k[i]<.99?u.id+' at '+Math.round(f.k[i]*100)+'%':null).filter(Boolean);
+ let m=hs.length?'<b>'+hs.length+' hotspot'+(hs.length>1?'s':'')+': '+hs.join(', ')+'</b>: predicted to reach '+C+'\u00B0C within '+D.horizon_min+' min.':(rr.length?'<b>Rising risk on '+rr.join(', ')+'.</b> Keep an eye on it.':'<b>All racks normal.</b> Temperatures are within safe limits.');
+ if(deg.length)m+=' Cooling unit '+deg.join(', ')+' is running below full output.';
+ $('msg').innerHTML=m;$('head').className='head'+(hs.length?' l2':(rr.length?' l1':''))+(playing?'':' paused');$('clock').textContent=fmt(f.t);
+ $('scrub').value=idx;head.setAttribute('x1',tx(idx));head.setAttribute('x2',tx(idx));
+ if(sel===null){let b=0;f.r.forEach((r,i)=>{if(r.S>f.r[b].S)b=i});sel=b;RK[b].g.classList.add('sel')}
+ inspector();
+ const ev=EV.filter(e=>e.i<=idx).slice(-8).reverse();
+ $('log').innerHTML=ev.length?ev.map(e=>'<div class="ev" data-i="'+e.i+'"><time>'+fmt(F[e.i].t,1)+'</time><span>'+evText(e)+'</span></div>').join(''):'<div class="empty">No alerts yet. Press play and watch the hall.</div>';
+ $('log').querySelectorAll('.ev').forEach(e=>e.addEventListener('click',()=>go(+e.dataset.i,true)))}
+function go(i,snap){idx=((i%N)+N)%N;if(snap)pause();draw(!!snap)}
+function tick(){if(playing){idx=(idx+1)%N;draw(false)}}
+function sched(){clearInterval(timer);timer=setInterval(tick,900/speed)}
+function pause(){playing=false;$('bPlay').innerHTML='\u25B6 Play';$('head').classList.add('paused');$('livetxt').textContent='PAUSED'}
+function play(){playing=true;$('bPlay').innerHTML='\u23F8 Pause';$('head').classList.remove('paused');$('livetxt').textContent='LIVE SIMULATION'}
+$('bPlay').onclick=()=>{playing?pause():play()};$('bRe').onclick=()=>{go(0,true);play()};
+$('bNext').onclick=()=>{let n=EV.find(e=>e.i>idx&&isBad(e))||EV.find(e=>isBad(e));if(n)go(n.i,true)};
+document.querySelectorAll('button[data-sp]').forEach(b=>b.onclick=()=>{speed=+b.dataset.sp;document.querySelectorAll('button[data-sp]').forEach(x=>x.classList.toggle('on',x===b));sched()});
+$('scrub').max=N-1;$('scrub').oninput=e=>go(+e.target.value,true);
+// smooth temperature animation (runs every screen refresh)
+function anim(){RK.forEach((k,i)=>{if(disp[i]===null)return;const d=tgt[i]-disp[i];disp[i]=Math.abs(d)<.02?tgt[i]:disp[i]+d*.14;
+ const c=col(disp[i]);k.body.setAttribute('fill',c);k.tt.firstChild.nodeValue=disp[i].toFixed(1);
+ k.glow.setAttribute('fill',c);k.glow.setAttribute('opacity',Math.max(0,Math.min(.55,(disp[i]-(W-22))/34)))});requestAnimationFrame(anim)}
+draw(true);sched();requestAnimationFrame(anim);
+window.__eco={go,get idx(){return idx},pause,play};
+})();
+</script></body></html>

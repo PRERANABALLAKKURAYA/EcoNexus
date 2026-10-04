@@ -1,0 +1,21 @@
+# Default digital twin: 6 racks (2 rows x 3), 2 cooling units
+racks:
+  - {id: R1, zone: Z1, p_idle: 2.0, p_max: 8.0, position: [0, 0]}
+  - {id: R2, zone: Z1, p_idle: 2.0, p_max: 8.0, position: [1, 0]}
+  - {id: R3, zone: Z1, p_idle: 2.0, p_max: 8.0, position: [2, 0]}
+  - {id: R4, zone: Z2, p_idle: 2.0, p_max: 8.0, position: [0, 1]}
+  - {id: R5, zone: Z2, p_idle: 2.0, p_max: 8.0, position: [1, 1]}
+  - {id: R6, zone: Z2, p_idle: 2.0, p_max: 8.0, position: [2, 1]}
+cooling_units:
+  - {id: C1, zone: Z1, capacity: 1.0, supply_temp: 18.0,
+     serves: {R1: 1.0, R2: 1.0, R3: 1.0, R4: 0.5}}
+  - {id: C2, zone: Z2, capacity: 1.0, supply_temp: 18.0,
+     serves: {R3: 0.5, R4: 1.0, R5: 1.0, R6: 1.0}}
+coupling:          # [rack_a, rack_b, weight w]
+  - [R1, R2, 0.5]
+  - [R2, R3, 0.5]
+  - [R4, R5, 0.5]
+  - [R5, R6, 0.5]
+  - [R1, R4, 0.3]
+  - [R2, R5, 0.3]
+  - [R3, R6, 0.3]

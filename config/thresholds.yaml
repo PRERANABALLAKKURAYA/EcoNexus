@@ -1,0 +1,10 @@
+warning_temp: 65.0
+critical_temp: 75.0
+rising_slope: 1.0        # degC per interval
+warning_margin: 5.0      # "close to warning" margin for the slope rule
+cooling_deficit: 0.8     # c_i at or below this = weak cooling
+high_load: 0.75          # mean utilisation at or above this = sustained load
+window_k: 6              # intervals for rolling means
+spare_util: 0.6          # a target rack needs utilisation <= this
+safe_margin: 5.0         # a target rack must forecast <= warning - margin
+risk_weights: [0.4, 0.2, 0.2, 0.2]   # w1..w4 of Eq. 4.6 (sum to 1)

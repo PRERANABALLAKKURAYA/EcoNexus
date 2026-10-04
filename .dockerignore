@@ -1,0 +1,9 @@
+.git
+__pycache__
+*.pyc
+models/
+data/telemetry.csv
+data/playback.json
+data/decision_log.csv
+tests/
+.venv
